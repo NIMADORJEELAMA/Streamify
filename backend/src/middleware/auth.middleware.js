@@ -10,6 +10,7 @@ export const protectRoute = async (req, res, next) => {
         .status(401)
         .json({ message: "Unauthorized - No token provided" });
     }
+
     const decoded = jwt.verify(token, process.env.JWT_SECRET_KEY);
 
     if (!decoded) {
@@ -23,9 +24,13 @@ export const protectRoute = async (req, res, next) => {
     }
 
     req.user = user;
-
     next();
   } catch (error) {
-    console.log("error in protectRoute middleware", error);
+    console.error("Error in protectRoute middleware:", error);
+
+    // ✅ Always return JSON, never leave it hanging
+    return res
+      .status(401)
+      .json({ message: "Unauthorized - Token verification failed" });
   }
 };

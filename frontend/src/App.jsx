@@ -1,7 +1,7 @@
 import { Navigate, Route, Routes } from "react-router";
 
 import HomePage from "./pages/HomePage.jsx";
-import SignUpPage from "./pages/SignUpPage.jsx";
+import SignUpPage from "./pages/SignupPage.jsx";
 import LoginPage from "./pages/LoginPage.jsx";
 import NotificationsPage from "./pages/NotificationsPage.jsx";
 import CallPage from "./pages/CallPage.jsx";
@@ -14,7 +14,10 @@ import PageLoader from "./components/PageLoader.jsx";
 import useAuthUser from "./hooks/useAuthUser.js";
 import Layout from "./components/Layout.jsx";
 import { useThemeStore } from "./store/useThemeStore.js";
-import PostPage from "./pages/PostPage.jsx";
+import QuotePage from "./pages/QuotePage.jsx";
+import UserDetails from "./pages/UserDetails.jsx";
+import PostFeed from "./pages/PostFeed.jsx";
+import PostPage from "./components/PostDashboard/PostPage.jsx";
 
 const App = () => {
   const { isLoading, authUser } = useAuthUser();
@@ -74,6 +77,30 @@ const App = () => {
         />
         <Route
           path="/posts"
+          element={
+            isAuthenticated && isOnboarded ? (
+              <Layout showSidebar={true}>
+                <QuotePage />
+              </Layout>
+            ) : (
+              <Navigate to={!isAuthenticated ? "/login" : "/onboarding"} />
+            )
+          }
+        />
+        <Route
+          path="/userDetails"
+          element={
+            isAuthenticated && isOnboarded ? (
+              <Layout showSidebar={true}>
+                <UserDetails />
+              </Layout>
+            ) : (
+              <Navigate to={!isAuthenticated ? "/login" : "/onboarding"} />
+            )
+          }
+        />
+        <Route
+          path="/PostPage"
           element={
             isAuthenticated && isOnboarded ? (
               <Layout showSidebar={true}>

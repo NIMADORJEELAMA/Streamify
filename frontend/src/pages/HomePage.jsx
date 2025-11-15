@@ -83,7 +83,7 @@ const HomePage = () => {
               <FriendCard key={friend._id} user={friend} type="friend" />
             ))}
 
-            {recommendedUsers.map((user) => (
+            {/* {recommendedUsers.map((user) => (
               <FriendCard
                 key={user._id}
                 user={user}
@@ -92,7 +92,7 @@ const HomePage = () => {
                 isPending={isPending}
                 onSendRequest={sendRequestMutation}
               />
-            ))}
+            ))} */}
           </div>
         )}
 

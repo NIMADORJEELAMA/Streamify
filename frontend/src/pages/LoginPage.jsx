@@ -24,6 +24,7 @@ const LoginPage = () => {
 
   // This is how we did it using our custom hook - optimized version
   const { isPending, error, loginMutation } = useLogin();
+  console.log("error", error);
 
   const handleLogin = (e) => {
     e.preventDefault();
