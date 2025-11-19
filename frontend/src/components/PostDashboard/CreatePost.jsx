@@ -43,7 +43,7 @@ export default function CreatePost({ onPostCreated }) {
   };
 
   return (
-    <div className="bg-white shadow-md rounded-2xl p-4">
+    <div className="bg-white shadow-md   rounded-2xl p-4">
       {/* Compact header */}
       <div
         className="border rounded-xl p-3 cursor-pointer hover:bg-gray-100 transition text-gray-600"

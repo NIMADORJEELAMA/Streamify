@@ -5,14 +5,15 @@ import PostList from "./PostList";
 export default function PostPage() {
   const [refreshKey, setRefreshKey] = useState(0);
 
-  // Trigger refresh in PostList when new post is added
   const handlePostCreated = () => {
     setRefreshKey((prev) => prev + 1);
   };
 
   return (
-    <div className="max-w-xl mx-auto p-6 space-y-6">
-      <CreatePost onPostCreated={handlePostCreated} />
+    <div className="max-w-[800px] mx-auto px-6 space-y-6 mt-4 ">
+      {/* <CreatePost onPostCreated={handlePostCreated} /> */}
+
+      {/* PostList handles the scrolling */}
       <PostList key={refreshKey} />
     </div>
   );

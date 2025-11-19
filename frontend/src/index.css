@@ -32,3 +32,13 @@
 .str-chat__message-input {
   border-top: 1px solid #ddd;
 }
+
+/* index.css */
+.hide-scrollbar {
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE / Edge */
+}
+
+.hide-scrollbar::-webkit-scrollbar {
+  display: none; /* Chrome, Safari */
+}
