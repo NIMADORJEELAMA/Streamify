@@ -13,6 +13,7 @@ import {
   UserPlusIcon,
   UsersIcon,
 } from "lucide-react";
+import FriendsList from "../components/FriendsList";
 
 import { capitialize } from "../lib/utils";
 
@@ -67,7 +68,8 @@ const HomePage = () => {
           </Link>
         </div>
 
-        {loadingFriends ? (
+        {/* 
+      {loadingFriends ? (
           <div className="flex justify-center py-12">
             <span className="loading loading-spinner loading-lg" />
           </div>
@@ -75,26 +77,15 @@ const HomePage = () => {
           <NoFriendsFound />
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-            {/* {friends.map((friend) => (
-              <FriendCard key={friend._id} friend={friend} />
-            ))} */}
+          
 
             {friends.map((friend) => (
               <FriendCard key={friend._id} user={friend} type="friend" />
             ))}
 
-            {/* {recommendedUsers.map((user) => (
-              <FriendCard
-                key={user._id}
-                user={user}
-                type="recommended"
-                hasRequestBeenSent={outgoingRequestsIds.has(user._id)}
-                isPending={isPending}
-                onSendRequest={sendRequestMutation}
-              />
-            ))} */}
+            
           </div>
-        )}
+        )} */}
 
         <section>
           <div className="mb-6 sm:mb-8">

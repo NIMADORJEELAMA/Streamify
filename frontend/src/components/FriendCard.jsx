@@ -8,7 +8,10 @@ const FriendCard = ({
   onSendRequest,
   hasRequestBeenSent,
   isPending,
+  onOpenChat,
 }) => {
+  // const [openChatUser, setOpenChatUser] = useState(null);
+
   return (
     <div className="card bg-base-200 hover:shadow-md transition-shadow">
       <div className="card-body p-4">
@@ -32,9 +35,12 @@ const FriendCard = ({
         </div>
 
         {type === "friend" ? (
-          <Link to={`/chat/${user._id}`} className="btn btn-outline w-full">
+          <button
+            className="btn btn-outline w-full"
+            onClick={() => onOpenChat(user)}
+          >
             Message
-          </Link>
+          </button>
         ) : (
           <button
             className={`btn w-full mt-2 ${

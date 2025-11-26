@@ -4,20 +4,20 @@
 
 .str-chat__channel {
   display: flex;
-  align-items: center;
-  justify-content: center;
-  background: linear-gradient(to bottom, #c9e8c9, #b7e7bb);
+  /* align-items: center; */
+  /* justify-content: center; */
+  /* background: linear-gradient(to bottom, #c9e8c9, #b7e7bb); */
   height: 100%;
 }
 
 .str-chat__container {
   max-width: 1200px;
   width: 100%;
-  height: 80% !important;
+  height: 87% !important;
   margin: 0 auto !important;
   border-radius: 8px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-  overflow: hidden;
+  /* overflow: hidden; */
 }
 
 .str-chat__list {
@@ -31,4 +31,72 @@
 
 .str-chat__message-input {
   border-top: 1px solid #ddd;
+}
+
+/* index.css */
+.hide-scrollbar {
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE / Edge */
+}
+
+.hide-scrollbar::-webkit-scrollbar {
+  display: none; /* Chrome, Safari */
+}
+
+/* //chat */
+
+/* MESSAGE LIST BACKGROUND */
+.str-chat__list {
+  background: #f5f7fb !important;
+  padding: 12px !important;
+}
+
+/* MESSAGE BUBBLES */
+.str-chat__message--me .str-chat__message-simple__text {
+  background: #4f46e5 !important; /* Indigo */
+  color: #fff !important;
+  padding: 10px 14px !important;
+  border-radius: 14px 14px 4px 14px !important;
+}
+
+.str-chat__message--other .str-chat__message-simple__text {
+  background: #ffffff !important;
+  color: #333 !important;
+  padding: 10px 14px !important;
+  border-radius: 14px 14px 14px 4px !important;
+  border: 1px solid #e5e7eb;
+}
+
+/* INPUT AREA */
+.str-chat__input {
+  border-top: 1px solid #e5e7eb !important;
+  background: #fff !important;
+  padding: 10px !important;
+}
+
+.str-chat__textarea {
+  border-radius: 10px !important;
+  border: 1px solid #d1d5db !important;
+  padding: 12px !important;
+}
+
+/* HEADER */
+.str-chat__header-livestream {
+  background: #ffffff !important;
+  border-bottom: 1px solid #e5e7eb !important;
+  padding: 14px !important;
+}
+
+/* THREAD PANEL */
+.str-chat__thread {
+  background: #ffffff !important;
+}
+
+/* REMOVE UGLY SCROLLBAR */
+*::-webkit-scrollbar {
+  width: 6px;
+}
+*::-webkit-scrollbar-thumb {
+  background: #c7c7c7;
+  border-radius: 20px;
 }
