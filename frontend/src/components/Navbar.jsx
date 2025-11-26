@@ -1,66 +1,148 @@
-import { Link, useLocation } from "react-router";
+import {
+  Search,
+  Menu,
+  Home,
+  Users,
+  MessageSquare,
+  PlayCircle,
+  Bell,
+} from "lucide-react";
+
 import useAuthUser from "../hooks/useAuthUser";
-import { BellIcon, LogOutIcon, ShipWheelIcon } from "lucide-react";
-import ThemeSelector from "./ThemeSelector";
 import useLogout from "../hooks/useLogout";
+import { Link, useLocation } from "react-router";
+import ThemeSelector from "./ThemeSelector";
 
 const Navbar = () => {
   const { authUser } = useAuthUser();
-  const location = useLocation();
-  const isChatPage = location.pathname?.startsWith("/chat");
-
-  // const queryClient = useQueryClient();
-  // const { mutate: logoutMutation } = useMutation({
-  //   mutationFn: logout,
-  //   onSuccess: () => queryClient.invalidateQueries({ queryKey: ["authUser"] }),
-  // });
-
   const { logoutMutation } = useLogout();
+  const location = useLocation();
+
+  const isActive = (path) => location.pathname === path;
 
   return (
-    <nav className="bg-base-200 border-b border-base-300 sticky top-0 z-30 h-16 flex items-center">
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-end w-full">
-          {/* LOGO - ONLY IN THE CHAT PAGE */}
-          {isChatPage && (
-            <div className="pl-5">
-              <Link to="/" className="flex items-center gap-2.5">
-                <ShipWheelIcon className="size-9 text-primary" />
-                <span className="text-3xl font-bold font-mono bg-clip-text text-transparent bg-gradient-to-r from-primary to-secondary  tracking-wider">
-                  Streamify
-                </span>
-              </Link>
-            </div>
-          )}
+    <div className="w-full bg-base-100 border-b border-base-300 shadow-sm fixed top-0 z-50">
+      {/* ---------------- MOBILE HEADER ---------------- */}
+      <div className="flex items-center justify-between p-3 md:hidden">
+        <Link to="/">
+          <img
+            src="https://upload.wikimedia.org/wikipedia/commons/0/05/Facebook_Logo_(2019).png"
+            alt="facebook"
+            className="h-6"
+          />
+        </Link>
 
-          <div className="flex items-center gap-3 sm:gap-4 ml-auto">
-            <Link to={"/notifications"}>
-              <button className="btn btn-ghost btn-circle">
-                <BellIcon className="h-6 w-6 text-base-content opacity-70" />
-              </button>
-            </Link>
-          </div>
-
-          {/* TODO */}
-          <ThemeSelector />
-
-          <div className="avatar">
-            <div className="w-9 rounded-full">
-              <img
-                src={authUser?.profilePic}
-                alt="User Avatar"
-                rel="noreferrer"
-              />
-            </div>
-          </div>
-
-          {/* Logout button */}
-          <button className="btn btn-ghost btn-circle" onClick={logoutMutation}>
-            <LogOutIcon className="h-6 w-6 text-base-content opacity-70" />
+        <div className="flex items-center gap-4">
+          <button className="p-2 rounded-full bg-base-200">
+            <Search className="h-5 w-5" />
+          </button>
+          <button className="p-2 rounded-full bg-base-200">
+            <Menu className="h-5 w-5" />
           </button>
         </div>
       </div>
-    </nav>
+
+      {/* ---------------- MOBILE ICONS ROW ---------------- */}
+      <div className="flex justify-around py-2 border-t border-base-300 md:hidden bg-base-100">
+        <NavMobileItem to="/" active={isActive("/")}>
+          <Home className="h-6 w-6" />
+        </NavMobileItem>
+
+        <NavMobileItem to="/friends" active={isActive("/friends")}>
+          <Users className="h-6 w-6" />
+        </NavMobileItem>
+
+        <NavMobileItem to="/messages" active={isActive("/messages")}>
+          <MessageSquare className="h-6 w-6" />
+        </NavMobileItem>
+
+        <NavMobileItem to="/videos" active={isActive("/videos")}>
+          <PlayCircle className="h-6 w-6" />
+        </NavMobileItem>
+
+        <NavMobileItem to="/notifications" active={isActive("/notifications")}>
+          <Bell className="h-6 w-6" />
+        </NavMobileItem>
+      </div>
+
+      {/* ---------------- DESKTOP NAVBAR ---------------- */}
+      <div className="hidden md:flex items-center justify-between px-6 h-16">
+        <Link to="/" className="flex items-center">
+          <img
+            src="https://upload.wikimedia.org/wikipedia/commons/0/05/Facebook_Logo_(2019).png"
+            alt="logo"
+            className="h-8"
+          />
+        </Link>
+
+        {/* Center icons */}
+        <div className="flex items-center gap-10">
+          <NavDesktopItem to="/" active={isActive("/")}>
+            <Home className="h-7 w-7" />
+          </NavDesktopItem>
+
+          <NavDesktopItem to="/friends" active={isActive("/friends")}>
+            <Users className="h-7 w-7" />
+          </NavDesktopItem>
+
+          <NavDesktopItem to="/messages" active={isActive("/messages")}>
+            <MessageSquare className="h-7 w-7" />
+          </NavDesktopItem>
+
+          <NavDesktopItem to="/videos" active={isActive("/videos")}>
+            <PlayCircle className="h-7 w-7" />
+          </NavDesktopItem>
+
+          <NavDesktopItem
+            to="/notifications"
+            active={isActive("/notifications")}
+          >
+            <Bell className="h-7 w-7" />
+          </NavDesktopItem>
+        </div>
+
+        {/* Right side */}
+        <div className="flex items-center gap-4">
+          <Link to="/profile">
+            <div className="avatar cursor-pointer">
+              <div className="w-10 rounded-full ring ring-primary ring-offset-base-100 ring-offset-2">
+                <img src={authUser?.profilePic} alt="User" />
+              </div>
+            </div>
+          </Link>
+          <ThemeSelector />
+
+          <button className="btn btn-ghost btn-circle" onClick={logoutMutation}>
+            <Menu className="h-6 w-6" />
+          </button>
+        </div>
+      </div>
+    </div>
   );
 };
+
+/* --------------------------------------
+   MOBILE NAV ITEM (WITH ACTIVE COLOR)
+--------------------------------------- */
+const NavMobileItem = ({ to, active, children }) => (
+  <Link to={to}>
+    <div className="relative flex flex-col items-center">
+      <div className={active ? "text-primary" : "opacity-70"}>{children}</div>
+      {active && <div className="w-8 h-1 bg-primary rounded-full mt-1"></div>}
+    </div>
+  </Link>
+);
+
+/* --------------------------------------
+   DESKTOP NAV ITEM (WITH ACTIVE UNDERLINE)
+--------------------------------------- */
+const NavDesktopItem = ({ to, active, children }) => (
+  <Link to={to} className="relative flex flex-col items-center">
+    <div className={active ? "text-primary" : "opacity-70"}>{children}</div>
+    {active && (
+      <div className="absolute -bottom-3 w-14 h-1 bg-primary rounded-full" />
+    )}
+  </Link>
+);
+
 export default Navbar;

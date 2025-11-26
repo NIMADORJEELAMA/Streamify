@@ -18,6 +18,7 @@ import QuotePage from "./pages/QuotePage.jsx";
 import UserDetails from "./pages/UserDetails.jsx";
 import PostFeed from "./pages/PostFeed.jsx";
 import PostPage from "./components/PostDashboard/PostPage.jsx";
+import FriendsList from "./components/FriendsList.jsx";
 
 const App = () => {
   const { isLoading, authUser } = useAuthUser();
@@ -36,7 +37,8 @@ const App = () => {
           element={
             isAuthenticated && isOnboarded ? (
               <Layout showSidebar={true}>
-                <HomePage />
+                {/* <HomePage /> */}
+                <PostPage />
               </Layout>
             ) : (
               <Navigate to={!isAuthenticated ? "/login" : "/onboarding"} />
@@ -76,6 +78,18 @@ const App = () => {
           }
         />
         <Route
+          path="/messages"
+          element={
+            isAuthenticated && isOnboarded ? (
+              <Layout showSidebar={true}>
+                <FriendsList />
+              </Layout>
+            ) : (
+              <Navigate to={!isAuthenticated ? "/login" : "/onboarding"} />
+            )
+          }
+        />
+        <Route
           path="/posts"
           element={
             isAuthenticated && isOnboarded ? (
@@ -93,6 +107,18 @@ const App = () => {
             isAuthenticated && isOnboarded ? (
               <Layout showSidebar={true}>
                 <UserDetails />
+              </Layout>
+            ) : (
+              <Navigate to={!isAuthenticated ? "/login" : "/onboarding"} />
+            )
+          }
+        />
+        <Route
+          path="/friends"
+          element={
+            isAuthenticated && isOnboarded ? (
+              <Layout showSidebar={true}>
+                <HomePage />
               </Layout>
             ) : (
               <Navigate to={!isAuthenticated ? "/login" : "/onboarding"} />

@@ -10,7 +10,7 @@ export default function PostPage() {
   };
 
   return (
-    <div className="max-w-[800px] mx-auto px-6 space-y-6 mt-4 ">
+    <div className="max-w-[800px] mx-auto px-0 space-y-6 ">
       {/* <CreatePost onPostCreated={handlePostCreated} /> */}
 
       {/* PostList handles the scrolling */}

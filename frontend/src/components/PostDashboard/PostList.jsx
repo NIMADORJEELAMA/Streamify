@@ -180,7 +180,7 @@ export default function PostList() {
         return (
           <div
             key={p._id}
-            className="bg-white rounded-xl shadow-sm hover:shadow-md transition-all duration-300 overflow-hidden border border-gray-100"
+            className=" rounded-xl shadow-sm hover:shadow-md transition-all duration-300 overflow-hidden border border-gray-100"
           >
             {/* Header */}
             <div className="flex items-center justify-between p-4 pb-3">
@@ -191,7 +191,7 @@ export default function PostList() {
                       p.author?.profilePic ||
                       "https://cdn-icons-png.flaticon.com/512/3177/3177440.png"
                     }
-                    className="w-12 h-12 rounded-full object-cover ring-2 ring-offset-1 ring-blue-100"
+                    className="w-12 h-12 rounded-full object-contain ring-2 ring-offset-1 ring-blue-100"
                     alt="Profile"
                   />
                   <div className="absolute bottom-0 right-0 w-3.5 h-3.5 bg-green-500 rounded-full border-2 border-white"></div>
@@ -229,7 +229,7 @@ export default function PostList() {
               <div className="mt-2">
                 <img
                   src={`http://localhost:5001${p.image}`}
-                  className="w-full max-h-[500px] object-cover"
+                  className="w-full max-h-[500px] object-contain"
                   alt="Post content"
                 />
               </div>
