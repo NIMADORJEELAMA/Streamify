@@ -12,62 +12,39 @@ import postRoutes from "./routes/post.routes.js";
 import { connectDB } from "./lib/db.js";
 
 const app = express();
-const server = http.createServer(app);
+const server = http.createServer(app); // ✅ Create HTTP server
 const PORT = process.env.PORT || 5001;
 
-// 🌍 Allowed frontends
-const allowedOrigins = [
-  "http://localhost:5173",
-  "https://streamify-two-pied.vercel.app", // your deployed frontend
-];
+// ✅ Initialize Socket.IO
+const io = new Server(server, {
+  cors: {
+    origin: "http://localhost:5173", // your frontend URL
+    credentials: true,
+  },
+});
 
-// ✅ CORS for Express API
+// ✅ Setup CORS, middleware, etc.
 app.use(
   cors({
-    origin: (origin, callback) => {
-      if (!origin || allowedOrigins.includes(origin)) {
-        callback(null, true);
-      } else {
-        callback(new Error("Not allowed by CORS"));
-      }
-    },
+    origin: "http://localhost:5173",
     credentials: true,
   })
 );
-
-// ⭐ Required for cookies in production
-app.use((req, res, next) => {
-  res.header("Access-Control-Allow-Credentials", "true");
-  res.header("Access-Control-Allow-Origin", req.headers.origin);
-  res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE");
-  res.header("Access-Control-Allow-Headers", "Content-Type, Authorization");
-  next();
-});
-
-// Middleware
 app.use(express.json());
 app.use(cookieParser());
 app.use("/uploads", express.static("uploads"));
 
-// API Routes
+// ✅ API Routes
 app.use("/api/auth", authRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/chat", chatRoutes);
 app.use("/api/quotes", quoteRoutes);
 app.use("/api/posts", postRoutes);
 
-// Socket.IO setup
-const io = new Server(server, {
-  cors: {
-    origin: allowedOrigins,
-    credentials: true,
-  },
-});
-
-// Attach io to app so controllers can use it
+// ✅ Attach io instance to app (so controllers can emit)
 app.set("io", io);
 
-// Socket.IO logic
+// ✅ Socket.IO logic
 io.on("connection", (socket) => {
   console.log("🟢 New socket connected:", socket.id);
 
@@ -76,8 +53,8 @@ io.on("connection", (socket) => {
   });
 });
 
-// Start Server
+// ✅ Start Server + Connect DB
 server.listen(PORT, () => {
   connectDB();
-  console.log(`🚀 Server running on port ${PORT}`);
+  console.log(`🚀 Server is running on port ${PORT}`);
 });
