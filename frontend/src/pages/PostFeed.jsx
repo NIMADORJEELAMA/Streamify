@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from "react";
+import { axiosInstance } from "../lib/axios";
+// adjust path if needed
 
 export default function PostFeed() {
   const [text, setText] = useState("");
@@ -7,46 +9,37 @@ export default function PostFeed() {
   const [editingPostId, setEditingPostId] = useState(null);
   const [editText, setEditText] = useState("");
 
+  const IMAGE_BASE_URL = "https://streamifynew.onrender.com/api";
+
   // Fetch posts on mount
   useEffect(() => {
     const fetchPosts = async () => {
       try {
-        const res = await fetch("http://localhost:5001/api/posts", {
-          credentials: "include",
-        });
-        const data = await res.json();
-        setPosts(data);
+        const res = await axiosInstance.get("/posts");
+        setPosts(res.data);
       } catch (err) {
         console.error("Error fetching posts:", err);
       }
     };
+
     fetchPosts();
   }, []);
 
   // Handle post submit (Create)
   const handleSubmit = async (e) => {
     e.preventDefault();
+
     const formData = new FormData();
     formData.append("text", text);
     if (image) formData.append("image", image);
 
     try {
-      const res = await fetch("http://localhost:5001/api/posts", {
-        method: "POST",
-        credentials: "include",
-        body: formData,
-      });
-
-      const newPost = await res.json();
-      if (res.ok) {
-        setPosts([newPost, ...posts]);
-        setText("");
-        setImage(null);
-      } else {
-        alert(newPost.message || "Failed to post");
-      }
+      const res = await axiosInstance.post("/posts", formData);
+      setPosts([res.data, ...posts]);
+      setText("");
+      setImage(null);
     } catch (err) {
-      console.error("Error posting:", err);
+      alert(err.response?.data?.message || "Failed to post");
     }
   };
 
@@ -55,18 +48,10 @@ export default function PostFeed() {
     if (!window.confirm("Are you sure you want to delete this post?")) return;
 
     try {
-      const res = await fetch(`http://localhost:5001/api/posts/${postId}`, {
-        method: "DELETE",
-        credentials: "include",
-      });
-
-      if (res.ok) {
-        setPosts(posts.filter((p) => p._id !== postId));
-      } else {
-        alert("Failed to delete post");
-      }
+      await axiosInstance.delete(`/posts/${postId}`);
+      setPosts(posts.filter((p) => p._id !== postId));
     } catch (err) {
-      console.error("Error deleting post:", err);
+      alert("Failed to delete post");
     }
   };
 
@@ -82,22 +67,12 @@ export default function PostFeed() {
     formData.append("text", editText);
 
     try {
-      const res = await fetch(`http://localhost:5001/api/posts/${postId}`, {
-        method: "PUT",
-        credentials: "include",
-        body: formData,
-      });
-
-      const updatedPost = await res.json();
-      if (res.ok) {
-        setPosts(posts.map((p) => (p._id === postId ? updatedPost : p)));
-        setEditingPostId(null);
-        setEditText("");
-      } else {
-        alert("Failed to update post");
-      }
+      const res = await axiosInstance.put(`/posts/${postId}`, formData);
+      setPosts(posts.map((p) => (p._id === postId ? res.data : p)));
+      setEditingPostId(null);
+      setEditText("");
     } catch (err) {
-      console.error("Error updating post:", err);
+      alert("Failed to update post");
     }
   };
 
@@ -158,7 +133,7 @@ export default function PostFeed() {
                 <p className="text-lg">{p.text}</p>
                 {p.image && (
                   <img
-                    src={`http://localhost:5001${p.image}`}
+                    src={`${axiosInstance}${p.image}`}
                     alt="Post"
                     className="mt-2 rounded-lg max-h-80 object-cover"
                   />

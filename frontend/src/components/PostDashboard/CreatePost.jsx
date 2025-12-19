@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { createPost } from "../../lib/api";
 
 export default function CreatePost({ onPostCreated }) {
   const [isOpen, setIsOpen] = useState(false);
@@ -6,7 +7,6 @@ export default function CreatePost({ onPostCreated }) {
   const [image, setImage] = useState(null);
   const [preview, setPreview] = useState(null);
 
-  // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -15,24 +15,16 @@ export default function CreatePost({ onPostCreated }) {
     if (image) formData.append("image", image);
 
     try {
-      const res = await fetch("http://localhost:5001/api/posts", {
-        method: "POST",
-        credentials: "include",
-        body: formData,
-      });
+      const newPost = await createPost(formData);
 
-      const newPost = await res.json();
-      if (res.ok) {
-        onPostCreated(newPost);
-        setIsOpen(false);
-        setText("");
-        setImage(null);
-        setPreview(null);
-      } else {
-        alert(newPost.message || "Failed to post");
-      }
+      onPostCreated(newPost);
+      setIsOpen(false);
+      setText("");
+      setImage(null);
+      setPreview(null);
     } catch (err) {
       console.error("Error posting:", err);
+      alert("Failed to post");
     }
   };
 
@@ -43,8 +35,7 @@ export default function CreatePost({ onPostCreated }) {
   };
 
   return (
-    <div className="bg-white shadow-md   rounded-2xl p-4">
-      {/* Compact header */}
+    <div className="bg-white shadow-md rounded-2xl p-4">
       <div
         className="border rounded-xl p-3 cursor-pointer hover:bg-gray-100 transition text-gray-600"
         onClick={() => setIsOpen(true)}
@@ -52,11 +43,9 @@ export default function CreatePost({ onPostCreated }) {
         What’s on your mind?
       </div>
 
-      {/* Modal */}
       {isOpen && (
         <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
           <div className="bg-white rounded-2xl p-6 w-[90%] max-w-md shadow-lg relative">
-            {/* Close button */}
             <button
               className="absolute top-2 right-3 text-gray-500 text-xl hover:text-gray-700"
               onClick={() => setIsOpen(false)}
@@ -77,7 +66,6 @@ export default function CreatePost({ onPostCreated }) {
                 rows="4"
               />
 
-              {/* Image preview */}
               {preview && (
                 <img
                   src={preview}
