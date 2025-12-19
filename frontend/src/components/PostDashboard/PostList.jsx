@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { io } from "socket.io-client";
+import io from "socket.io-client";
 import {
   Heart,
   MessageCircle,
@@ -14,12 +14,17 @@ import {
 } from "lucide-react";
 import useAuthUser from "../../hooks/useAuthUser";
 import CreatePost from "./CreatePost";
-
+import { getPosts, likePost, commentOnPost } from "../../lib/api";
+import { axiosInstance } from "../../lib/axios";
 export default function PostList() {
   const { authUser } = useAuthUser();
   const userId = authUser._id;
+  const socket = io(import.meta.env.VITE_API_BASE_URL, {
+    withCredentials: true,
+  });
 
   const [posts, setPosts] = useState([]);
+  console.log("posts", posts);
   const [commentText, setCommentText] = useState("");
   const [activeCommentPostId, setActiveCommentPostId] = useState(null);
   const [shareMenuPostId, setShareMenuPostId] = useState(null);
@@ -52,8 +57,6 @@ export default function PostList() {
   };
 
   useEffect(() => {
-    const socket = io("http://localhost:5001", { withCredentials: true });
-
     socket.on("postLiked", ({ postId, likes }) => {
       setPosts((prev) =>
         prev.map((p) =>
@@ -76,10 +79,7 @@ export default function PostList() {
   useEffect(() => {
     const fetchPosts = async () => {
       try {
-        const res = await fetch("http://localhost:5001/api/posts", {
-          credentials: "include",
-        });
-        const data = await res.json();
+        const data = await getPosts();
         setPosts(data);
       } catch (err) {
         console.error("Error fetching posts:", err);
@@ -90,47 +90,33 @@ export default function PostList() {
 
   const handleLike = async (postId) => {
     try {
-      const res = await fetch(
-        `http://localhost:5001/api/posts/${postId}/like`,
-        {
-          method: "POST",
-          credentials: "include",
-        }
-      );
+      const data = await likePost(postId);
 
-      const data = await res.json();
-
-      if (res.ok) {
-        setPosts((prev) =>
-          prev.map((p) => {
-            if (p._id === postId) {
-              // Handle new API format {likes: count, isLiked: boolean}
-              if (
-                typeof data.likes === "number" &&
-                typeof data.isLiked === "boolean"
-              ) {
-                return {
-                  ...p,
-                  likesCount: data.likes,
-                  isLikedByUser: data.isLiked,
-                  // Keep original likes array if it exists
-                  likes: data.isLiked
-                    ? [
-                        ...(Array.isArray(p.likes) ? p.likes : []),
-                        userId,
-                      ].filter((v, i, a) => a.indexOf(v) === i)
-                    : Array.isArray(p.likes)
-                    ? p.likes.filter((id) => id !== userId)
-                    : [],
-                };
-              }
-              // Handle old API format (array of user IDs)
-              return { ...p, likes: Array.isArray(data) ? data : [] };
+      setPosts((prev) =>
+        prev.map((p) => {
+          if (p._id === postId) {
+            if (
+              typeof data.likes === "number" &&
+              typeof data.isLiked === "boolean"
+            ) {
+              return {
+                ...p,
+                likesCount: data.likes,
+                isLikedByUser: data.isLiked,
+                likes: data.isLiked
+                  ? [...(Array.isArray(p.likes) ? p.likes : []), userId].filter(
+                      (v, i, a) => a.indexOf(v) === i
+                    )
+                  : Array.isArray(p.likes)
+                  ? p.likes.filter((id) => id !== userId)
+                  : [],
+              };
             }
-            return p;
-          })
-        );
-      }
+            return { ...p, likes: Array.isArray(data) ? data : [] };
+          }
+          return p;
+        })
+      );
     } catch (err) {
       console.error("Error liking post:", err);
     }
@@ -140,27 +126,16 @@ export default function PostList() {
     if (!commentText.trim()) return;
 
     try {
-      const res = await fetch(
-        `http://localhost:5001/api/posts/${postId}/comment`,
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          credentials: "include",
-          body: JSON.stringify({ text: commentText }),
-        }
+      const updatedComments = await commentOnPost(postId, commentText);
+
+      setPosts((prev) =>
+        prev.map((p) =>
+          p._id === postId ? { ...p, comments: updatedComments } : p
+        )
       );
 
-      const updatedComments = await res.json();
-
-      if (res.ok) {
-        setPosts((prev) =>
-          prev.map((p) =>
-            p._id === postId ? { ...p, comments: updatedComments } : p
-          )
-        );
-        setCommentText("");
-        setActiveCommentPostId(null);
-      }
+      setCommentText("");
+      setActiveCommentPostId(null);
     } catch (err) {
       console.error("Error commenting:", err);
     }
@@ -228,7 +203,7 @@ export default function PostList() {
             {p.image && (
               <div className="mt-2">
                 <img
-                  src={`http://localhost:5001${p.image}`}
+                  src={`${axiosInstance}/${p.image}`}
                   className="w-full max-h-[500px] object-contain"
                   alt="Post content"
                 />

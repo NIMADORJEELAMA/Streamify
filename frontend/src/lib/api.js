@@ -1,4 +1,5 @@
 import { axiosInstance } from "./axios";
+import io from "socket.io-client";
 
 export const signup = async (signupData) => {
   const response = await axiosInstance.post("/auth/signup", signupData);
@@ -17,6 +18,7 @@ export const logout = async () => {
 export const getAuthUser = async () => {
   try {
     const res = await axiosInstance.get("/auth/me");
+    console.log("res", res);
     return res.data;
   } catch (error) {
     console.log("Error in getAuthUser:", error);
@@ -65,3 +67,30 @@ export async function getStreamToken() {
   const response = await axiosInstance.get("/chat/token");
   return response.data;
 }
+
+export const createPost = async (formData) => {
+  const response = await axiosInstance.post("/posts", formData, {
+    headers: { "Content-Type": "multipart/form-data" },
+  });
+  return response.data;
+};
+
+export const getPosts = async () => {
+  const res = await axiosInstance.get("/posts");
+  return res.data;
+};
+
+export const likePost = async (postId) => {
+  const res = await axiosInstance.post(`/posts/${postId}/like`);
+  return res.data;
+};
+
+export const commentOnPost = async (postId, text) => {
+  const res = await axiosInstance.post(`/posts/${postId}/comment`, { text });
+  return res.data;
+};
+
+// SOCKET instance (auto uses same baseURL)
+export const socket = io(import.meta.env.VITE_API_BASE_URL, {
+  withCredentials: true,
+});
