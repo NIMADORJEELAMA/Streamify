@@ -15,7 +15,7 @@ import {
 import useAuthUser from "../../hooks/useAuthUser";
 import CreatePost from "./CreatePost";
 import { getPosts, likePost, commentOnPost } from "../../lib/api";
-import { axiosInstance } from "../../lib/axios";
+import { BASE_URL } from "../../lib/axios";
 export default function PostList() {
   const { authUser } = useAuthUser();
   const userId = authUser._id;
@@ -23,6 +23,7 @@ export default function PostList() {
     withCredentials: true,
   });
 
+  console.log("BASE_URL ", BASE_URL);
   const [posts, setPosts] = useState([]);
   console.log("posts", posts);
   const [commentText, setCommentText] = useState("");
@@ -203,7 +204,7 @@ export default function PostList() {
             {p.image && (
               <div className="mt-2">
                 <img
-                  src={`${axiosInstance}/${p.image}`}
+                  src={`${BASE_URL}${p.image}`}
                   className="w-full max-h-[500px] object-contain"
                   alt="Post content"
                 />
