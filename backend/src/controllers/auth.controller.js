@@ -4,6 +4,7 @@ import jwt from "jsonwebtoken";
 
 export async function signup(req, res) {
   const { email, password, fullName } = req.body;
+  const isProduction = process.env.NODE_ENV === "production";
 
   try {
     if (!email || !password || !fullName) {
@@ -55,13 +56,11 @@ export async function signup(req, res) {
         expiresIn: "7d",
       }
     );
-
     res.cookie("jwt", token, {
       maxAge: 7 * 24 * 60 * 60 * 1000,
-      httpOnly: true, // prevent XSS attacks,
-      // sameSite: "strict", //prevent CSRF attacks
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "none",
+      httpOnly: true,
+      secure: isProduction,
+      sameSite: isProduction ? "none" : "lax",
       path: "/",
     });
 
@@ -73,6 +72,8 @@ export async function signup(req, res) {
 }
 
 export async function login(req, res) {
+  const isProduction = process.env.NODE_ENV === "production";
+
   try {
     const { email, password } = req.body;
 
@@ -93,10 +94,9 @@ export async function login(req, res) {
 
     res.cookie("jwt", token, {
       maxAge: 7 * 24 * 60 * 60 * 1000,
-      httpOnly: true, // prevent XSS attacks,
-      // sameSite: "strict", //prevent CSRF attacks
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "none",
+      httpOnly: true,
+      secure: isProduction,
+      sameSite: isProduction ? "none" : "lax",
       path: "/",
     });
 
