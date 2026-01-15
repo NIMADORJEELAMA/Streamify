@@ -15,13 +15,14 @@ const app = express();
 const server = http.createServer(app);
 const PORT = process.env.PORT || 5001;
 
-// 🌍 Allowed frontends
+console.log("ENV:", process.env.NODE_ENV);
+
 const allowedOrigins = [
   "http://localhost:5173",
   "https://streamify-two-pied.vercel.app", // your deployed frontend
 ];
 
-// ✅ CORS for Express API
+//   CORS for Express API
 app.use(
   cors({
     origin: (origin, callback) => {
@@ -35,7 +36,7 @@ app.use(
   })
 );
 
-// ⭐ Required for cookies in production
+//   Required for cookies in production
 app.use((req, res, next) => {
   res.header("Access-Control-Allow-Credentials", "true");
   res.header("Access-Control-Allow-Origin", req.headers.origin);
@@ -69,15 +70,15 @@ app.set("io", io);
 
 // Socket.IO logic
 io.on("connection", (socket) => {
-  console.log("🟢 New socket connected:", socket.id);
+  console.log("  New socket connected:", socket.id);
 
   socket.on("disconnect", () => {
-    console.log("🔴 Socket disconnected:", socket.id);
+    console.log("  Socket disconnected:", socket.id);
   });
 });
 
 // Start Server
 server.listen(PORT, () => {
   connectDB();
-  console.log(`🚀 Server running on port ${PORT}`);
+  console.log(`  Server running on port ${PORT}`);
 });
