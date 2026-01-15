@@ -1,10 +1,22 @@
 import Post from "../models/post.model.js";
+import cloudinary from "../lib/cloudinary.js";
+import fs from "fs";
 
 // Create post
+
 export const createPost = async (req, res) => {
   try {
     const { text } = req.body;
-    const image = req.file ? `/uploads/${req.file.filename}` : null;
+    let image = null;
+
+    if (req.file) {
+      const result = await cloudinary.uploader.upload(req.file.path, {
+        folder: "posts",
+      });
+
+      image = result.secure_url;
+      fs.unlinkSync(req.file.path); // delete temp file
+    }
 
     if (!text && !image)
       return res.status(400).json({ message: "Post cannot be empty" });
@@ -21,6 +33,26 @@ export const createPost = async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 };
+// export const createPost = async (req, res) => {
+//   try {
+//     const { text } = req.body;
+//     const image = req.file ? `/uploads/${req.file.filename}` : null;
+
+//     if (!text && !image)
+//       return res.status(400).json({ message: "Post cannot be empty" });
+
+//     const post = await Post.create({
+//       text,
+//       image,
+//       author: req.user._id,
+//     });
+
+//     res.status(200).json(await post.populate("author", "fullName profilePic"));
+//   } catch (err) {
+//     console.error("Error creating post:", err);
+//     res.status(500).json({ message: "Server error" });
+//   }
+// };
 
 // Get all posts
 export const getPosts = async (req, res) => {
@@ -42,18 +74,22 @@ export const updatePost = async (req, res) => {
     const { id } = req.params;
     const { text } = req.body;
 
-    // Find the post by ID
     const post = await Post.findById(id);
     if (!post) return res.status(404).json({ message: "Post not found" });
 
-    // Only author can update
-    if (post.author.toString() !== req.user._id.toString()) {
+    if (post.author.toString() !== req.user._id.toString())
       return res.status(403).json({ message: "Not authorized" });
-    }
 
-    // Update text or image if provided
     if (text) post.text = text;
-    if (req.file) post.image = `/uploads/${req.file.filename}`;
+
+    if (req.file) {
+      const result = await cloudinary.uploader.upload(req.file.path, {
+        folder: "posts",
+      });
+
+      post.image = result.secure_url;
+      fs.unlinkSync(req.file.path);
+    }
 
     await post.save();
     res.status(200).json(await post.populate("author", "fullName profilePic"));
@@ -62,6 +98,32 @@ export const updatePost = async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 };
+
+// export const updatePost = async (req, res) => {
+//   try {
+//     const { id } = req.params;
+//     const { text } = req.body;
+
+//     // Find the post by ID
+//     const post = await Post.findById(id);
+//     if (!post) return res.status(404).json({ message: "Post not found" });
+
+//     // Only author can update
+//     if (post.author.toString() !== req.user._id.toString()) {
+//       return res.status(403).json({ message: "Not authorized" });
+//     }
+
+//     // Update text or image if provided
+//     if (text) post.text = text;
+//     if (req.file) post.image = `/uploads/${req.file.filename}`;
+
+//     await post.save();
+//     res.status(200).json(await post.populate("author", "fullName profilePic"));
+//   } catch (err) {
+//     console.error("Error updating post:", err);
+//     res.status(500).json({ message: "Server error" });
+//   }
+// };
 
 // Delete post
 export const deletePost = async (req, res) => {

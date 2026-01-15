@@ -204,7 +204,7 @@ export default function PostList() {
             {p.image && (
               <div className="mt-2">
                 <img
-                  src={`${BASE_URL}${p.image}`}
+                  src={` ${p.image}`}
                   className="w-full max-h-[500px] object-contain"
                   alt="Post content"
                 />
