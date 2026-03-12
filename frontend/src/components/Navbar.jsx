@@ -23,13 +23,11 @@ const Navbar = () => {
   return (
     <div className="w-full bg-base-100 border-b border-base-300 shadow-sm fixed top-0 z-50">
       {/* ---------------- MOBILE HEADER ---------------- */}
+      {/* ---------------- MOBILE HEADER ---------------- */}
+
       <div className="flex items-center justify-between p-3 md:hidden">
         <Link to="/">
-          <img
-            src="https://upload.wikimedia.org/wikipedia/commons/0/05/Facebook_Logo_(2019).png"
-            alt="facebook"
-            className="h-6"
-          />
+          <img src="src/assets/logo.png" alt="logo" className="h-6" />
         </Link>
 
         <div className="flex items-center gap-4">
@@ -67,12 +65,13 @@ const Navbar = () => {
 
       {/* ---------------- DESKTOP NAVBAR ---------------- */}
       <div className="hidden md:flex items-center justify-between px-6 h-16">
-        <Link to="/" className="flex items-center">
-          <img
-            src="https://upload.wikimedia.org/wikipedia/commons/0/05/Facebook_Logo_(2019).png"
-            alt="logo"
-            className="h-8"
-          />
+        <Link to="/" className="flex items-center gap-2">
+          <img src="src/assets/logo.png" alt="logo" className="h-8" />
+
+          {/* Desktop only brand text */}
+          <span className="hidden md:inline text-xl font-bold text-green-600">
+            Streamify
+          </span>
         </Link>
 
         {/* Center icons */}
